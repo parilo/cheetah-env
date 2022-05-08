@@ -3,10 +3,10 @@
   <default>
     <joint armature=".1" damping=".01" limited="true" solimplimit="0 .8 .03" solreflimit=".02 1" stiffness="0"/>
     <geom conaffinity="0" condim="3" contype="1" friction=".4 .1 .1" rgba="0.8 0.6 .4 1" solimp="0.0 0.8 0.01" solref="0.02 1"/>
-    <motor ctrllimited="true" ctrlrange="-1 1"/>
+    <motor gear="50" ctrllimited="true" ctrlrange="-1 1"/>
   </default>
   <size nstack="300000" nuser_geom="1"/>
-  <option gravity="0 0 -9.81" timestep="0.01"/>
+  <option gravity="0 0 -9.81" timestep="0.02"/>
   <asset>
     <texture builtin="gradient" height="100" rgb1="1 1 1" rgb2="0 0 0" type="skybox" width="100"/>
     <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
@@ -84,21 +84,21 @@
   </worldbody>
   <actuator>
 
-    <motor gear="120" joint="leg1_top_side" name="leg1_top_side"/>
-    <motor gear="120" joint="leg1_top_fwd" name="leg1_top_fwd"/>
-    <motor gear="120" joint="leg1_mid" name="leg1_mid"/>
+    <motor joint="leg1_top_side" name="leg1_top_side"/>
+    <motor joint="leg1_top_fwd" name="leg1_top_fwd"/>
+    <motor joint="leg1_mid" name="leg1_mid"/>
 
-    <motor gear="120" joint="leg2_top_side" name="leg2_top_side"/>
-    <motor gear="120" joint="leg2_top_fwd" name="leg2_top_fwd"/>
-    <motor gear="120" joint="leg2_mid" name="leg2_mid"/>
+    <motor joint="leg2_top_side" name="leg2_top_side"/>
+    <motor joint="leg2_top_fwd" name="leg2_top_fwd"/>
+    <motor joint="leg2_mid" name="leg2_mid"/>
 
-    <motor gear="120" joint="leg3_top_side" name="leg3_top_side"/>
-    <motor gear="120" joint="leg3_top_fwd" name="leg3_top_fwd"/>
-    <motor gear="120" joint="leg3_mid" name="leg3_mid"/>
+    <motor joint="leg3_top_side" name="leg3_top_side"/>
+    <motor joint="leg3_top_fwd" name="leg3_top_fwd"/>
+    <motor joint="leg3_mid" name="leg3_mid"/>
 
-    <motor gear="120" joint="leg4_top_side" name="leg4_top_side"/>
-    <motor gear="120" joint="leg4_top_fwd" name="leg4_top_fwd"/>
-    <motor gear="120" joint="leg4_mid" name="leg4_mid"/>
+    <motor joint="leg4_top_side" name="leg4_top_side"/>
+    <motor joint="leg4_top_fwd" name="leg4_top_fwd"/>
+    <motor joint="leg4_mid" name="leg4_mid"/>
 
   </actuator>
 </mujoco>

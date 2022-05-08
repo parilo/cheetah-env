@@ -1,3 +1,4 @@
+import gym
 import mujoco_py
 import os
 
@@ -40,7 +41,7 @@ def set_velocity_rot_pointer(
     sim.model.geom_size[id_geom][1] = vel_z / 10
 
 
-class CheetahEnv:
+class CheetahEnv(gym.Env):
 
     def __init__(self, seed=1):
         self._np_random, _ = seeding.np_random(seed)
@@ -56,7 +57,12 @@ class CheetahEnv:
         self._target_vel_lin = np.array([0, 0, 0])
         self._target_vel_rot_z = 0
 
-        self._obs_space = spaces.Box(low=-1.0, high=2.0, shape=(17 + 18,), dtype=np.float32)
+        self._obs_space = {
+            'qpos': spaces.Box(low=-np.inf, high=np.inf, shape=(17,), dtype=np.float32),
+            'qvel': spaces.Box(low=-np.inf, high=np.inf, shape=(18,), dtype=np.float32),
+            'target_vel_lin': spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32),
+            'target_vel_rot_z': spaces.Box(low=-np.inf, high=np.inf, shape=(1,), dtype=np.float32),
+        }
         self._action_space = spaces.Box(low=-1, high=1, shape=(12,), dtype=np.float32)
 
     @property
@@ -71,6 +77,8 @@ class CheetahEnv:
         return {
             "qpos": np.copy(self._sim.data.qpos[2:]),
             "qvel": np.copy(self._sim.data.qvel),
+            "target_vel_lin": self._target_vel_lin,
+            "target_vel_rot_z": np.array([self._target_vel_rot_z]),
         }
 
     def reset(self):
@@ -84,7 +92,19 @@ class CheetahEnv:
         self._update_velocity_rot_pointer()
         self._update_target_velocity_lin_pointer()
         self._update_target_velocity_rot_pointer()
-        return self._get_obs(), None, False, {}
+
+        # calc reward
+        qvel = self._get_torso_qvel()
+        lin_vel = qvel[:3]
+        rot_z_vel = qvel[5]
+        # print(f'--- {lin_vel} {self._target_vel_lin}')
+        lin_vel_reward = -np.linalg.norm(
+            self._target_vel_lin - lin_vel
+        )
+        rot_z_vel_reward = 0  #-np.abs(self._target_vel_rot_z - rot_z_vel)
+        reward = lin_vel_reward + rot_z_vel_reward
+
+        return self._get_obs(), reward, False, {}
 
     def render(self):
         self._get_viewer().render()
@@ -114,7 +134,7 @@ class CheetahEnv:
             self._get_torso_qvel()[5],
         )
 
-    def set_target_velocity_lin_pointer(self, vel: np.ndarray):
+    def set_target_velocity_lin(self, vel: np.ndarray):
         self._target_vel_lin = vel
 
     def _update_target_velocity_lin_pointer(self):
@@ -125,7 +145,7 @@ class CheetahEnv:
             self._target_vel_lin,
         )
 
-    def set_target_velocity_rot_pointer(self, vel_z: float):
+    def set_target_velocity_rot(self, vel_z: float):
         self._target_vel_rot_z = vel_z
 
     def _update_target_velocity_rot_pointer(self):
